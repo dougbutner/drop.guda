@@ -1,0 +1,279 @@
+{
+    "____comment": "This file was generated with eosio-abigen. DO NOT EDIT ",
+    "version": "eosio::abi/1.2",
+    "types": [],
+    "structs": [
+        {
+            "name": "balances_s",
+            "base": "",
+            "fields": [
+                {
+                    "name": "wallet",
+                    "type": "name"
+                },
+                {
+                    "name": "balance",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "claim",
+            "base": "",
+            "fields": [
+                {
+                    "name": "wallet",
+                    "type": "name"
+                },
+                {
+                    "name": "drop_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "qty",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "claims_s",
+            "base": "",
+            "fields": [
+                {
+                    "name": "drop_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "counter",
+                    "type": "uint32"
+                },
+                {
+                    "name": "last_claim",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "closebank",
+            "base": "",
+            "fields": [
+                {
+                    "name": "wallet",
+                    "type": "name"
+                }
+            ]
+        },
+        {
+            "name": "create",
+            "base": "",
+            "fields": [
+                {
+                    "name": "target_collection",
+                    "type": "name"
+                },
+                {
+                    "name": "target",
+                    "type": "int32[]"
+                },
+                {
+                    "name": "price",
+                    "type": "asset"
+                },
+                {
+                    "name": "max_claims",
+                    "type": "uint32"
+                },
+                {
+                    "name": "limit",
+                    "type": "uint32"
+                },
+                {
+                    "name": "start_time",
+                    "type": "uint32"
+                },
+                {
+                    "name": "end_time",
+                    "type": "uint32"
+                },
+                {
+                    "name": "cooldown",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "drops_s",
+            "base": "",
+            "fields": [
+                {
+                    "name": "drop_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "target_collection",
+                    "type": "name"
+                },
+                {
+                    "name": "target",
+                    "type": "int32[]"
+                },
+                {
+                    "name": "price",
+                    "type": "asset"
+                },
+                {
+                    "name": "max_claims",
+                    "type": "uint32"
+                },
+                {
+                    "name": "limit",
+                    "type": "uint32"
+                },
+                {
+                    "name": "claims",
+                    "type": "uint32"
+                },
+                {
+                    "name": "start_time",
+                    "type": "uint32"
+                },
+                {
+                    "name": "end_time",
+                    "type": "uint32"
+                },
+                {
+                    "name": "cooldown",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "remove",
+            "base": "",
+            "fields": [
+                {
+                    "name": "drop_id",
+                    "type": "uint64"
+                }
+            ]
+        },
+        {
+            "name": "updateclaims",
+            "base": "",
+            "fields": [
+                {
+                    "name": "drop_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "max_claims",
+                    "type": "uint32"
+                },
+                {
+                    "name": "limit",
+                    "type": "uint32"
+                }
+            ]
+        },
+        {
+            "name": "updateprice",
+            "base": "",
+            "fields": [
+                {
+                    "name": "drop_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "price",
+                    "type": "asset"
+                }
+            ]
+        },
+        {
+            "name": "updatetime",
+            "base": "",
+            "fields": [
+                {
+                    "name": "drop_id",
+                    "type": "uint64"
+                },
+                {
+                    "name": "start_time",
+                    "type": "uint32"
+                },
+                {
+                    "name": "end_time",
+                    "type": "uint32"
+                },
+                {
+                    "name": "cooldown",
+                    "type": "uint32"
+                }
+            ]
+        }
+    ],
+    "actions": [
+        {
+            "name": "claim",
+            "type": "claim",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "closebank",
+            "type": "closebank",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "create",
+            "type": "create",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "remove",
+            "type": "remove",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "updateclaims",
+            "type": "updateclaims",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "updateprice",
+            "type": "updateprice",
+            "ricardian_contract": ""
+        },
+        {
+            "name": "updatetime",
+            "type": "updatetime",
+            "ricardian_contract": ""
+        }
+    ],
+    "tables": [
+        {
+            "name": "balances",
+            "type": "balances_s",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "claims",
+            "type": "claims_s",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        },
+        {
+            "name": "drops",
+            "type": "drops_s",
+            "index_type": "i64",
+            "key_names": [],
+            "key_types": []
+        }
+    ],
+    "kv_tables": {},
+    "ricardian_clauses": [],
+    "variants": [],
+    "action_results": []
+}

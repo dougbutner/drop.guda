@@ -1,40 +1,6 @@
-ACTION drop::openbal(
-    name wallet,
-    name contract,
-    symbol symbol
-) {
-    require_auth(wallet);
+// === User Actions === //
 
-    balances_t balances(get_self(), get_self().value);
-    auto bal_itr = balances.find(wallet.value);
-
-    if (bal_itr == balances.end()) {
-        std::vector<extended_asset> tokens = {};
-        tokens.push_back(extended_asset(asset(0, symbol), contract));
-        balances.emplace(wallet, [&](auto &row) {
-            row.wallet = wallet;
-            row.tokens = tokens;
-        });
-    } else {
-        std::vector<extended_asset> tokens = bal_itr->tokens;
-        auto tokens_itr = std::find_if(
-            tokens.begin(),
-            tokens.end(),
-            [&contract, &symbol](const extended_asset token) -> bool {
-                return contract == token.contract && symbol == token.get_extended_symbol().get_symbol();
-            }
-        );
-        if (tokens_itr != tokens.end()) {
-            return;
-        }
-        tokens.push_back(extended_asset(asset(0, symbol), contract));
-        balances.modify(bal_itr, same_payer, [&](auto &row) {
-            row.tokens = tokens;
-        });
-    }
-}
-
-ACTION drop::closebal(
+ACTION drop::closebank(
     name wallet
 ) {
     require_auth(wallet);
@@ -42,16 +8,11 @@ ACTION drop::closebal(
     balances_t balances(get_self(), get_self().value);
     auto bal_itr = balances.find(wallet.value);
 
-    if (bal_itr != balances.end() && bal_itr->tokens.size() > 0) {
-        std::vector<extended_asset> tokens = bal_itr->tokens;
-        for (extended_asset token : tokens) {
-            if (token.quantity.amount > 0) {
-                transfer_token(wallet, token.contract, token.quantity, "Token balance claim");
-            }
-        }
+    if (bal_itr != balances.end() && bal_itr->balance.amount > 0) {
+        transfer_token(wallet, "guda.guda"_n, bal_itr->balance, "🜛 See you later. Token balance refunded");
         balances.erase(bal_itr);
     }
-}
+} //END ACTION drop::closebank
 
 ACTION drop::claim(
     name wallet,
@@ -62,16 +23,17 @@ ACTION drop::claim(
 
     drops_t drops(get_self(), get_self().value);
     auto drop_itr = drops.find(drop_id);
-    check(drop_itr != drops.end(), "Drop not found");
+    check(drop_itr != drops.end(), "🜛 Drop not found");
 
+    // --- Check drop start and end times --- //
     if (drop_itr->start_time > 0) {
-        check(current_time_point().sec_since_epoch() >= drop_itr->start_time, "Drop has not started");
+        check(current_time_point().sec_since_epoch() >= drop_itr->start_time, "🜛 Hang on. Drop has not started");
     }
     if (drop_itr->end_time > 0) {
-        check(current_time_point().sec_since_epoch() <= drop_itr->end_time, "Drop already ended");
+        check(current_time_point().sec_since_epoch() <= drop_itr->end_time, "🜛 Where were you? Drop already ended");
     }
     if (drop_itr->max_claims > 0) {
-        check((drop_itr->claims + qty) <= drop_itr->max_claims, "Drop has maxed out");
+        check((drop_itr->claims + qty) <= drop_itr->max_claims, "🜛 Too slow. Drop has maxed out");
     }
 
     claims_t claims(get_self(), wallet.value);
@@ -79,7 +41,7 @@ ACTION drop::claim(
     uint32_t claim = qty;
     if (drop_itr->limit > 0) {
         if (qty > drop_itr->limit) {
-            check(false, ("Maximum of " + std::to_string(drop_itr->limit) + " per claim").c_str());
+            check(false, ("🜛 You're over the max of " + std::to_string(drop_itr->limit) + " per claim").c_str());
         }
         if (claim_itr != claims.end()) {
             if ((claim_itr->counter + qty) > drop_itr->limit) {
@@ -94,29 +56,20 @@ ACTION drop::claim(
         }
     }
 
-    extended_asset price = drop_itr->price;
-    if (price.quantity.amount > 0) {
+    // --- Check if the user has sufficient balance to pay the price --- //
+    asset price = drop_itr->price;
+    if (price.amount > 0) {
         balances_t balances(get_self(), get_self().value);
         auto bal_itr = balances.find(wallet.value);
-        check(bal_itr != balances.end(), "Please run openbal action first");
-
-        std::vector<extended_asset> tokens = bal_itr->tokens;
-        auto token_itr = std::find_if(
-            tokens.begin(),
-            tokens.end(),
-            [&price](const extended_asset token) -> bool {
-                return token.contract == price.contract && token.get_extended_symbol().get_symbol() == price.get_extended_symbol().get_symbol();
-            }
-        );
-        check(token_itr != tokens.end(), "No token balance");
-        *token_itr -= extended_asset(asset(price.quantity.amount * qty, price.get_extended_symbol().get_symbol()), price.contract);
-        check(token_itr->quantity.amount >= 0, "Insufficient balance");
+        check(bal_itr != balances.end(), "🜛 You haz no GUDA. Send moor.");
+        check(bal_itr->balance.amount >= price.amount * qty, "🜛 You need more GUDA to claim this NFT");
 
         balances.modify(bal_itr, same_payer, [&](auto &row) {
-            row.tokens = tokens;
+            row.balance -= asset(price.amount * qty, price.symbol);
         });
     }
 
+    // --- Mint the assets to the user --- //
     for (int32_t i = 0; i < qty; i++) {
         for (int32_t tmplt : drop_itr->target) {
             atomicassets::templates_t templates = atomicassets::get_templates(drop_itr->target_collection);
@@ -141,4 +94,4 @@ ACTION drop::claim(
             row.last_claim = current_time_point().sec_since_epoch();
         });
     }
-}
+} //END ACTION drop::claim

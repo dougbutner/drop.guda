@@ -1,7 +1,7 @@
 ACTION drop::create(
     name target_collection,
     std::vector<int32_t> target,
-    extended_asset price,
+    asset price,
     uint32_t max_claims,
     uint32_t limit,
     uint32_t start_time,
@@ -17,7 +17,7 @@ ACTION drop::create(
     atomicassets::templates_t templates = atomicassets::get_templates(target_collection);
     for (int32_t i : target) {
         if (templates.find(i) == templates.end()) {
-            check(false, ("Template " + std::to_string(i) + " not found in " + target_collection.to_string()).c_str());
+            check(false, ("🜛 Template " + std::to_string(i) + " not found in " + target_collection.to_string()).c_str());
         }
     }
 
@@ -45,7 +45,7 @@ ACTION drop::updateclaims(
 
     drops_t drops(get_self(), get_self().value);
     auto drop_itr = drops.find(drop_id);
-    check(drop_itr != drops.end(), "Record does not exist");
+    check(drop_itr != drops.end(), "🜛 Drop does not exist");
     drops.modify(drop_itr, get_self(), [&](auto &row) {
         row.max_claims = max_claims;
         row.limit = limit;
@@ -62,7 +62,7 @@ ACTION drop::updatetime(
 
     drops_t drops(get_self(), get_self().value);
     auto drop_itr = drops.find(drop_id);
-    check(drop_itr != drops.end(), "Record does not exist");
+    check(drop_itr != drops.end(), "🜛 Drop does not exist");
     drops.modify(drop_itr, get_self(), [&](auto &row) {
         row.start_time = start_time;
         row.end_time = end_time;
@@ -72,13 +72,13 @@ ACTION drop::updatetime(
 
 ACTION drop::updateprice(
     uint64_t drop_id,
-    extended_asset price
+    asset price
 ) {
     require_auth(get_self());
 
     drops_t drops(get_self(), get_self().value);
     auto drop_itr = drops.find(drop_id);
-    check(drop_itr != drops.end(), "Record does not exist");
+    check(drop_itr != drops.end(), "🜛 Drop does not exist");
     drops.modify(drop_itr, get_self(), [&](auto &row) {
         row.price = price;
     });
@@ -91,6 +91,6 @@ ACTION drop::remove(
 
     drops_t drops(get_self(), get_self().value);
     auto drop_itr = drops.find(drop_id);
-    check(drop_itr != drops.end(), "Record does not exist");
+    check(drop_itr != drops.end(), "🜛 Drop does not exist");
     drops.erase(drop_itr);
 }

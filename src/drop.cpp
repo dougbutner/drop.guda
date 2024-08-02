@@ -1,7 +1,9 @@
-#include <drop.hpp>
+#include "drop.hpp"
 #include "contract_actions.cpp"
 #include "user_actions.cpp"
 #include "utils.cpp"
+
+// === Guda Drop === //
 
 void drop::receive_token_transfer(
     name from,
@@ -13,23 +15,23 @@ void drop::receive_token_transfer(
         return;
     }
 
+    // --- Check if the received token is the GUDA token from guda.guda contract --- //
+    name contract = get_first_receiver();
+    check(contract == "guda.guda"_n, "🜛 We only take GUDA tokens here. 🔗 guda.love");
+    check(quantity.symbol == symbol("GUDA", 8), "🜛 We only take GUDA tokens here.");
+
     balances_t balances(get_self(), get_self().value);
     auto bal_itr = balances.find(from.value);
-    check(bal_itr != balances.end(), "Please run openbal action first");
 
-    std::vector<extended_asset> tokens = bal_itr->tokens;
-    name contract = get_first_receiver();
-    auto token_itr = std::find_if(
-        tokens.begin(),
-        tokens.end(),
-        [&contract, &quantity](const extended_asset token) -> bool {
-            return contract == token.contract && quantity.symbol == token.get_extended_symbol().get_symbol();
-        }
-    );
-    check(token_itr != tokens.end(), "Please run openbal action first");
-    *token_itr += extended_asset(quantity, get_first_receiver());
-
-    balances.modify(bal_itr, same_payer, [&](auto &row) {
-        row.tokens = tokens;
-    });
-}
+    if (bal_itr == balances.end()) {
+        // --- Initialize token balance if not already present --- //
+        balances.emplace(to, [&](auto &row) {
+            row.wallet = from;
+            row.balance = quantity;
+        });
+    } else {
+        balances.modify(bal_itr, same_payer, [&](auto &row) {
+            row.balance += quantity;
+        });
+    }
+} //END drop::receive_token_transfer

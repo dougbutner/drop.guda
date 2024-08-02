@@ -8,7 +8,7 @@ This is the code for the [drops.guda](https://waxblock.io/account/drops.guda) co
 4. Play the music LOUD
 5. Repeat
 
-Note: Trying to claim too many NFTs in one TX may fail due to chain-wide CPU limits. Avoid this by claiming a smaller number at a time. 
+Note: Trying to claim too many NFTs in one TX may fail due to chain-wide CPU limits. Avoid this by claiming a smaller number at a time.
 
 # 👉 
 # Learn about the project + Earn your GUDA at [guda.guda.love](https://guda.guda.love)

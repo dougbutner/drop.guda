@@ -1,12 +1,14 @@
---- drop Project ---
+# 🖼🎤 drops.guda Token-Gated NFTs by [🜛 Gudasol](https://linktr.ee/gudasol)
 
- - How to Build -
-   - cd to 'build' directory
-   - run the command 'cmake ..'
-   - run the command 'make'
+This is the code for the [drops.guda](https://waxblock.io/account/drops.guda) contract.
 
- - After build -
-   - The built smart contract is under the 'drop' directory in the 'build' directory
-   - You can then do a 'set contract' action with 'cleos' and point in to the './build/drop' directory
+1. Send any amount of [GUDA token](https://alcor.exchange/trade/GUDA-guda.guda_WAX-eosio.token) to drops.guda to set up your bank
+2. Decide what drop you want and note the ID (Find them in the contract table or on [guda.guda.love](https://guda.guda.love))
+3. Call the claim action on the contract with the drop ID
+4. Play the music LOUD
+5. Repeat
 
- - Additions to CMake should be done to the CMakeLists.txt in the './src' directory and not in the top level CMakeLists.txt
+Note: Trying to claim too many NFTs in one TX may fail due to chain-wide CPU limits. Avoid this by claiming a smaller number at a time. 
+
+# 👉 
+# Learn about the project + Earn your GUDA at [guda.guda.love](https://guda.guda.love)
